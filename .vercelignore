@@ -1,0 +1,5 @@
+wrangler.toml
+.wrangler/
+dist/_worker.js
+src/index.ts
+.dev.vars
