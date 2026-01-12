@@ -14,13 +14,18 @@ type Variables = {
 
 const app = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
-// CORS middleware
+// CORS middleware - Updated for Vercel deployment
 app.use(
   "*",
   cors({
-    origin: "*",
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:5173",
+      "https://note-craft-inky.vercel.app",
+    ],
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   })
 );
 

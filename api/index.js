@@ -5,13 +5,19 @@ import { handle } from "@hono/node-server/vercel";
 
 const app = new Hono();
 
-// CORS middleware
+// CORS middleware - Updated for Vercel deployment
 app.use(
   "*",
   cors({
-    origin: "*",
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:5173",
+      "https://note-craft-inky.vercel.app",
+      process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
+    ].filter(Boolean),
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   })
 );
 
