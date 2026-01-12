@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NoteCraft Debug</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .status {
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+      }
+      .success {
+        background: #d4edda;
+        color: #155724;
+      }
+      .error {
+        background: #f8d7da;
+        color: #721c24;
+      }
+      .info {
+        background: #d1ecf1;
+        color: #0c5460;
+      }
+      button {
+        padding: 10px 20px;
+        margin: 5px;
+        cursor: pointer;
+      }
+      pre {
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 5px;
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>NoteCraft Debug Page</h1>
+
+    <div id="environment" class="status info">
+      <h3>Environment Information</h3>
+      <p><strong>Hostname:</strong> <span id="hostname"></span></p>
+      <p><strong>Origin:</strong> <span id="origin"></span></p>
+      <p><strong>API Base URL:</strong> <span id="apiUrl"></span></p>
+    </div>
+
+    <div>
+      <h3>API Tests</h3>
+      <button onclick="testHealth()">Test Health Endpoint</button>
+      <button onclick="testAPI()">Test API Root</button>
+      <button onclick="testAuth()">Test Auth Endpoint</button>
+      <button onclick="testNotes()">Test Notes Endpoint</button>
+    </div>
+
+    <div id="results"></div>
+
+    <script src="/env.js"></script>
+    <script>
+      // Update environment info
+      document.getElementById("hostname").textContent =
+        window.location.hostname;
+      document.getElementById("origin").textContent = window.location.origin;
+      document.getElementById("apiUrl").textContent = window.ENV
+        ? window.ENV.API_BASE_URL
+        : "ENV not loaded";
+
+      function addResult(title, success, data) {
+        const results = document.getElementById("results");
+        const div = document.createElement("div");
+        div.className = `status ${success ? "success" : "error"}`;
+        div.innerHTML = `
+                <h4>${title}</h4>
+                <pre>${JSON.stringify(data, null, 2)}</pre>
+            `;
+        results.appendChild(div);
+      }
+
+      async function testHealth() {
+        try {
+          const response = await fetch("/api/health");
+          const data = await response.json();
+          addResult("Health Check", response.ok, data);
+        } catch (error) {
+          addResult("Health Check", false, { error: error.message });
+        }
+      }
+
+      async function testAPI() {
+        try {
+          const response = await fetch("/api");
+          const data = await response.json();
+          addResult("API Root", response.ok, data);
+        } catch (error) {
+          addResult("API Root", false, { error: error.message });
+        }
+      }
+
+      async function testAuth() {
+        try {
+          const response = await fetch("/api/auth/user");
+          const data = await response.json();
+          addResult("Auth User", response.ok, data);
+        } catch (error) {
+          addResult("Auth User", false, { error: error.message });
+        }
+      }
+
+      async function testNotes() {
+        try {
+          const response = await fetch("/api/notes");
+          const data = await response.json();
+          addResult("Notes", response.ok, data);
+        } catch (error) {
+          addResult("Notes", false, { error: error.message });
+        }
+      }
+
+      // Auto-run health check on load
+      window.addEventListener("load", () => {
+        setTimeout(testHealth, 1000);
+      });
+    </script>
+  </body>
+</html>

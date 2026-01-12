@@ -5,6 +5,31 @@ import { handle } from "@hono/node-server/vercel";
 
 const app = new Hono();
 
+// Health check endpoint
+app.get("/api/health", (c) => {
+  return c.json({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || "development",
+  });
+});
+
+// Root API endpoint
+app.get("/api", (c) => {
+  return c.json({
+    message: "NoteCraft API is running",
+    endpoints: [
+      "GET /api/health",
+      "GET /api/auth/user",
+      "GET /api/notes",
+      "POST /api/notes",
+      "GET /api/notes/:id",
+      "PUT /api/notes/:id",
+      "DELETE /api/notes/:id",
+    ],
+  });
+});
+
 // CORS middleware - Updated for Vercel deployment
 app.use(
   "*",
