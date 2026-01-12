@@ -1,4 +1,9 @@
 {
+  "functions": {
+    "api/index.js": {
+      "runtime": "nodejs18.x"
+    }
+  },
   "rewrites": [
     {
       "source": "/api/(.*)",
@@ -7,6 +12,17 @@
     {
       "source": "/auth/callback",
       "destination": "/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/auth/v1/callback",
+      "destination": "/index.html",
+      "permanent": false
     }
   ],
   "headers": [
@@ -31,5 +47,8 @@
         }
       ]
     }
-  ]
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
 }
